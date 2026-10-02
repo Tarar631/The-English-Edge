@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>The English Edge — Daily Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1B2A6B;
+    --navy-deep: #12204F;
+    --sky: #3B9FE0;
+    --blue-box: #EAF3FC;
+    --blue-box-line: #3B9FE0;
+    --wisteria: #A24FD6;
+    --wisteria-soft: #EFE2FA;
+    --cream: #FFFFFF;
+    --paper: #FFFFFF;
+    --panel: #FAF9FC;
+    --ink: #16213E;
+    --ink-soft: #626B85;
+    --line: #E7E4EE;
+    --good: #3F9469;
+    --shadow: rgba(22, 33, 62, 0.08);
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--cream); color-scheme: light; }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    min-height: 100vh;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .shell { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    padding: 28px 18px;
+    overflow-y: auto;
+  }
+  .brand { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; color: var(--navy); margin: 0 0 4px 4px; }
+  .brand-sub { font-size: 12.5px; color: var(--ink-soft); margin: 0 0 24px 4px; }
+  .streak { background: linear-gradient(135deg, var(--navy), var(--sky)); color: white; border-radius: 12px; padding: 14px 16px; margin-bottom: 22px; }
+  .streak-num { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600; line-height: 1; }
+  .streak-label { font-size: 12px; opacity: 0.9; margin-top: 3px; }
+
+  .day-list { list-style: none; margin: 0; padding: 0; }
+  .day-item { display: flex; align-items: center; gap: 10px; padding: 10px 10px; border-radius: 8px; cursor: pointer; font-size: 14px; color: var(--ink); margin-bottom: 2px; transition: background 0.15s ease; }
+  .day-item:hover { background: var(--wisteria-soft); }
+  .day-item.active { background: var(--navy); color: white; }
+  .day-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); flex-shrink: 0; }
+  .day-dot.done { background: var(--good); }
+  .day-item.active .day-dot.done { background: white; }
+  .day-item.locked { color: var(--ink-soft); }
+  .lock-icon { margin-left: auto; font-size: 12px; opacity: 0.6; }
+
+  .unlock-box { margin-top: 20px; padding: 14px; border: 1px dashed var(--line); border-radius: 10px; background: var(--paper); }
+  .unlock-box p { font-size: 12px; color: var(--ink-soft); margin: 0 0 8px; line-height: 1.5; }
+  .unlock-box input { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); font-size: 13px; margin-bottom: 8px; }
+  .unlock-box button { width: 100%; padding: 8px; border: none; border-radius: 6px; background: var(--navy); color: white; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .unlock-msg { font-size: 12px; margin-top: 6px; }
+  .unlock-msg.ok { color: var(--good); }
+  .unlock-msg.err { color: #C4553F; }
+
+  .reset-btn { width: 100%; margin-top: 14px; padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink-soft); font-size: 12.5px; cursor: pointer; }
+  .reset-btn:hover { color: var(--ink); border-color: var(--ink-soft); }
+
+  .main { flex: 1; padding: 40px 48px; max-width: 780px; }
+  .eyebrow { font-size: 13px; color: var(--wisteria); font-weight: 700; margin-bottom: 6px; letter-spacing: 0.02em; }
+  h1 { font-family: 'Fraunces', serif; font-size: 34px; font-weight: 600; margin: 0 0 6px; line-height: 1.15; color: var(--navy-deep); }
+  .subtitle { color: var(--ink-soft); font-size: 15px; margin-bottom: 32px; }
+
+  .section { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; margin-bottom: 18px; box-shadow: 0 1px 3px var(--shadow); }
+  .section-title { font-weight: 700; font-size: 15px; margin: 0 0 12px; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+  .section p, .section li { font-size: 14.5px; line-height: 1.7; color: var(--ink); }
+  .section ul.points { margin: 6px 0 0; padding-left: 20px; }
+  .section ul.points li { margin-bottom: 8px; }
+
+  .wu-question { margin-bottom: 22px; }
+  .wu-question:last-child { margin-bottom: 0; }
+  .wu-q-row { display: flex; align-items: flex-start; gap: 10px; }
+  .wu-q-row .wu-q-text { flex: 1; font-weight: 600; font-size: 14.5px; color: var(--ink); }
+  .wu-speak-btn { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; border: none; background: var(--wisteria); color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .wu-speak-btn:hover { background: var(--navy); }
+  .wu-answer { width: 100%; min-height: 60px; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-family: inherit; font-size: 14px; color: var(--ink); background: var(--panel); resize: vertical; margin-top: 8px; }
+  .wu-answer:focus { outline: 2px solid var(--sky); border-color: var(--sky); }
+
+  /* Blue box for pre-written / given content */
+  .given-box {
+    background: var(--blue-box);
+    border-left: 3px solid var(--blue-box-line);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-top: 4px;
+  }
+  .given-box p { margin: 0; }
+  .given-label { font-size: 12px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; display: block; }
+
+  .prompt-box { background: var(--wisteria-soft); border-left: 3px solid var(--wisteria); border-radius: 6px; padding: 12px 14px; font-size: 14px; font-style: italic; color: var(--ink); margin-top: 10px; }
+
+  .voice-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--navy); color: white; border: none; border-radius: 20px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+  .voice-btn.alt { background: var(--wisteria); }
+  .voice-btn:hover { opacity: 0.9; }
+  .voice-btn:disabled { opacity: 0.5; cursor: default; }
+
+  textarea.own-input { width: 100%; min-height: 90px; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-family: inherit; font-size: 14px; color: var(--ink); background: var(--panel); resize: vertical; margin-top: 12px; }
+  textarea.own-input:focus { outline: 2px solid var(--sky); border-color: var(--sky); }
+
+  .vocab-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+  .vocab-chip { display: flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 7px 8px 7px 14px; font-size: 13.5px; color: var(--ink); }
+  .vocab-chip .vc-text { display: flex; flex-direction: column; line-height: 1.25; }
+  .vocab-chip .vc-pron { font-size: 11px; color: var(--ink-soft); font-style: italic; }
+  .vocab-chip button { width: 26px; height: 26px; border-radius: 50%; border: none; background: var(--wisteria); color: white; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .vocab-chip button:hover { background: var(--navy); }
+
+  .chat-window { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .chat-msg { max-width: 85%; padding: 10px 13px; border-radius: 12px; font-size: 14px; line-height: 1.55; }
+  .chat-msg.user { align-self: flex-end; background: var(--navy); color: white; border-bottom-right-radius: 4px; }
+  .chat-msg.ai { align-self: flex-start; background: var(--wisteria-soft); color: var(--ink); border-bottom-left-radius: 4px; }
+  .chat-msg.system { align-self: center; color: var(--ink-soft); font-size: 12.5px; font-style: italic; }
+  .chat-msg-ai-row { display: flex; align-items: flex-start; gap: 8px; }
+  .chat-speak-btn { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; border: none; background: var(--wisteria); color: white; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+  .chat-speak-btn:hover { background: var(--navy); }
+  .chat-input-row { display: flex; gap: 8px; }
+  .chat-input-row input { flex: 1; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; font-family: inherit; }
+  .chat-input-row button { background: var(--navy); color: white; border: none; border-radius: 8px; padding: 10px 18px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .chat-input-row button:disabled { opacity: 0.5; cursor: default; }
+
+
+  .complete-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; flex-wrap: wrap; gap: 12px; }
+  .complete-btn { background: var(--good); color: white; border: none; padding: 12px 22px; border-radius: 8px; font-size: 14.5px; font-weight: 600; cursor: pointer; }
+  .complete-btn.done { background: var(--line); color: var(--ink-soft); cursor: default; }
+  .nav-links { display: flex; gap: 10px; }
+  .nav-links button { background: var(--paper); border: 1px solid var(--line); color: var(--ink); padding: 10px 16px; border-radius: 8px; font-size: 14px; cursor: pointer; }
+  .nav-links button:disabled { opacity: 0.35; cursor: default; }
+
+  .locked-view { text-align: center; padding: 60px 20px; }
+  .locked-view .icon { font-size: 40px; margin-bottom: 12px; }
+  .locked-view h2 { font-family: 'Fraunces', serif; font-size: 22px; margin: 0 0 8px; color: var(--navy-deep); }
+  .locked-view p { color: var(--ink-soft); font-size: 14.5px; max-width: 380px; margin: 0 auto; }
+
+  @media (max-width: 720px) {
+    .shell { flex-direction: column; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--line); }
+    .main { padding: 28px 20px; max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <p class="brand">The English Edge</p>
+    <p class="brand-sub">Daily 30-min practice</p>
+
+    <div class="streak">
+      <div class="streak-num" id="streakNum">0</div>
+      <div class="streak-label">day streak</div>
+    </div>
+
+    <ul class="day-list" id="dayList"></ul>
+
+    <div class="unlock-box" id="unlockBox">
+      <p>Free preview ends after Day <span id="freeLimitLabel"></span>. Enter your unlock code to access every lesson as it's added.</p>
+      <input type="text" id="unlockInput" placeholder="Unlock code">
+      <button onclick="tryUnlock()">Unlock</button>
+      <div class="unlock-msg" id="unlockMsg"></div>
+    </div>
+
+    <button class="reset-btn" id="resetBtn" onclick="resetProgress()">Reset progress</button>
+  </aside>
+
+  <main class="main" id="main"></main>
+</div>
+
+<script>
+/* ============================================================
+   LESSONS — add new days here anytime, no limit on how many.
+   Fields per lesson:
+     day, title
+     warmup          – intro/warm-up paragraph
+     tensePoints     – array of bullet strings explaining the grammar
+     speaking        – paragraph read aloud for pronunciation practice
+     writingTopic    – personal-experience writing prompt using the tense
+     writingVocab    – words/phrases suggested specifically for the writing task: [{text, pron}]
+     endVocab        – extra words/phrases for the day, with pronunciation guide: [{text, pron}]
+     starterPrompt   – opening line for the AI conversation partner
+   ============================================================ */
+const LESSONS = [
+  {
+    day: 1,
+    title: "Introducing Yourself",
+    warmupIntro: "Before you start today's lesson, take a moment to think about yourself. Speak each answer out loud first (to yourself, or record your voice), then write it in the box below. Try not to translate from your first language in your head — just say whatever comes naturally.",
+    warmupQuestions: [
+      "What is your name, and how do you like to be called?",
+      "Where are you from, and what is your city or town like?",
+      "What do you do — are you a student, do you work, or both?",
+      "What are two or three things you enjoy doing in your free time?"
+    ],
+    tenseTitle: "Today's grammar: Present Simple",
+    tensePoints: [
+      "Use the Present Simple for facts, routines, and things that are generally true — not just for 'right now'.",
+      "Structure for most subjects: Subject + base verb. Example: 'I study English.' / 'They live in Lahore.'",
+      "For he / she / it, add -s (or -es) to the verb. Example: 'She studies literature.' / 'He watches videos every evening.'",
+      "Negative form: Subject + do/does + not + base verb. Example: 'I don't work on Sundays.' / 'He doesn't drink coffee.'",
+      "Question form: Do/Does + subject + base verb? Example: 'Do you study every day?' / 'Does she live nearby?'",
+      "Common time words used with Present Simple: always, usually, often, sometimes, never, every day, on weekends."
+    ],
+    speaking: "Read this paragraph aloud, slowly and clearly, at least twice. Try to focus on rhythm, not speed: Hello, my name is Sara. I am a student, and I study English Language and Literature. I live in a small city with my family. Every morning, I wake up early and drink a cup of tea before I start my day. In the afternoon, I usually study for a few hours, and in the evening, I like to relax by reading or watching something in English. I am still learning, but I practice every single day, because I believe small steps add up over time.",
+    writingTopic: "Write 4 to 6 sentences describing your own typical day or daily routine, using the Present Simple. Include what time you usually wake up, what you do during the day, and something you enjoy doing regularly.",
+    writingVocab: [
+      { text: "wake up", pron: "wayk-UP" },
+      { text: "on a regular basis", pron: "on uh REG-yuh-ler BAY-sis" },
+      { text: "get used to", pron: "get YOOZD too" },
+      { text: "look forward to", pron: "look FOR-werd too" },
+      { text: "spend time", pron: "spend TIME" }
+    ],
+    endVocab: [
+      { text: "consistency", pron: "kon-SIS-ten-see" },
+      { text: "achieve", pron: "uh-CHEEV" },
+      { text: "motivation", pron: "moh-tih-VAY-shun" },
+      { text: "step by step", pron: "step by STEP" },
+      { text: "make progress", pron: "make PRAH-gress" }
+    ],
+    starterPrompt: "Ask me simple questions about my daily routine, one at a time, and gently correct any grammar mistakes I make in my answers."
+  },
+  {
+    day: 2,
+    title: "Talking About Your Day",
+    warmupIntro: "Speak each answer out loud first, then write it below. Don't worry about small mistakes — the goal is to keep talking without long pauses.",
+    warmupQuestions: [
+      "What time did you wake up yesterday?",
+      "What did you do in the morning, afternoon, and evening?",
+      "Did anything interesting or unusual happen?"
+    ],
+    tenseTitle: "Today's grammar: Past Simple",
+    tensePoints: [
+      "Use the Past Simple for actions that started and finished in the past.",
+      "Regular verbs: add -ed. Example: 'I studied English yesterday.' / 'She watched a movie.'",
+      "Many common verbs are irregular and don't follow the -ed rule: go → went, have → had, do → did, see → saw, eat → ate.",
+      "Negative form: Subject + did not (didn't) + base verb. Example: 'I didn't go out yesterday.'",
+      "Question form: Did + subject + base verb? Example: 'Did you finish your homework?'",
+      "Common time words: yesterday, last night, last week, ago, in 2020."
+    ],
+    speaking: "Read this paragraph aloud, twice, focusing on the -ed and irregular past sounds: Yesterday, I woke up a little late because I didn't hear my alarm. I had a quick breakfast and then I studied English for thirty minutes before I went outside. In the afternoon, I met a friend and we talked for almost an hour. In the evening, I watched a short video in English and wrote a few notes about new words I learned. It wasn't a perfect day, but it was a productive one.",
+    writingTopic: "Write 4 to 6 sentences about something you did yesterday or an experience from your past, using the Past Simple. Describe not just what happened, but how you felt about it.",
+    writingVocab: [
+      { text: "used to", pron: "YOOST too" },
+      { text: "a while ago", pron: "uh WYLE uh-GOH" },
+      { text: "at first", pron: "at FURST" },
+      { text: "in the end", pron: "in thee END" },
+      { text: "turned out", pron: "turnd OWT" }
+    ],
+    endVocab: [
+      { text: "experience", pron: "ik-SPEER-ee-ens" },
+      { text: "suddenly", pron: "SUD-en-lee" },
+      { text: "afterward", pron: "AF-ter-werd" },
+      { text: "look back on", pron: "look BAK on" },
+      { text: "learn a lesson", pron: "lern uh LES-un" }
+    ],
+    starterPrompt: "I'll tell you a few things I did yesterday. Listen, ask me a natural follow-up question about each one, and correct my Past Simple grammar if I make a mistake."
+  },
+  {
+    day: 3,
+    title: "Describing People and Things",
+    warmupIntro: "Think of a friend, family member, or teacher you know well. Speak each answer out loud first, then write it below.",
+    warmupQuestions: [
+      "How does this person look? Describe their appearance.",
+      "What is their personality like?",
+      "Why do you like spending time with them?"
+    ],
+    tenseTitle: "Today's grammar: Adjective order & 'to be' + adjective",
+    tensePoints: [
+      "Use 'to be' (am/is/are) + adjective to describe people, places, or things. Example: 'She is kind.' / 'The weather is nice today.'",
+      "When using more than one adjective before a noun, there's a natural order: opinion → size → age → shape → color → origin → material. Example: 'a beautiful, small, old wooden table.'",
+      "In everyday speech, 2–3 adjectives together is usually enough — you don't need to use every category at once.",
+      "Adjectives don't change form for plural nouns in English. Example: 'tall people' (not 'talls people').",
+      "Common describing adjectives: patient, hardworking, comfortable, friendly, confident, curious."
+    ],
+    speaking: "Read this paragraph aloud, twice, paying attention to adjective stress: My best friend is tall and friendly. She is very patient, and she always helps me when I have problems with my studies. Our classroom is small but comfortable, with big windows and a lot of natural light. I think it's important to be around people who are supportive and honest, because they help you grow.",
+    writingTopic: "Write 4 to 6 sentences describing a person, place, or object that matters to you, using adjectives and 'to be'. Explain why it matters to you, not just what it looks like.",
+    writingVocab: [
+      { text: "means a lot to me", pron: "meenz uh LOT too mee" },
+      { text: "reminds me of", pron: "ree-MYNDZ mee uv" },
+      { text: "stands out", pron: "standz OWT" },
+      { text: "in many ways", pron: "in MEN-ee wayz" },
+      { text: "gets along with", pron: "gets uh-LONG with" }
+    ],
+    endVocab: [
+      { text: "patient", pron: "PAY-shent" },
+      { text: "hardworking", pron: "hard-WUR-king" },
+      { text: "comfortable", pron: "KUMF-ter-bul" },
+      { text: "confident", pron: "KON-fih-dent" },
+      { text: "supportive", pron: "suh-POR-tiv" }
+    ],
+    starterPrompt: "Give me a person, place, or object to describe. I'll describe it in full sentences using adjectives, and you tell me if my word order and grammar are correct."
+  }
+];
+
+const FREE_LIMIT = 3;
+const UNLOCK_CODE = "EDGE2026";
+
+let state = { completed: [], unlocked: false, current: 1, drafts: {} };
+let chatHistory = {};
+let sampleFn = null;
+
+async function initSample() {
+  try { sampleFn = await claude.use("sample"); }
+  catch (e) { sampleFn = null; }
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('englishEdgeState');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state = Object.assign({ completed: [], unlocked: false, current: 1, drafts: {} }, parsed);
+    }
+  } catch (e) { /* storage unavailable */ }
+}
+function saveState() {
+  try { localStorage.setItem('englishEdgeState', JSON.stringify(state)); }
+  catch (e) { /* storage unavailable */ }
+}
+
+function isLocked(day) { return day > FREE_LIMIT && !state.unlocked; }
+
+function tryUnlock() {
+  const val = document.getElementById('unlockInput').value.trim();
+  const msg = document.getElementById('unlockMsg');
+  if (val === UNLOCK_CODE) {
+    state.unlocked = true;
+    saveState();
+    msg.textContent = "Unlocked — all lessons available.";
+    msg.className = "unlock-msg ok";
+    render();
+  } else {
+    msg.textContent = "That code isn't right. Check your Ko-fi confirmation.";
+    msg.className = "unlock-msg err";
+  }
+}
+
+let resetArmed = false;
+function resetProgress() {
+  const btn = document.getElementById('resetBtn');
+  if (!resetArmed) {
+    resetArmed = true;
+    btn.textContent = 'Click again to confirm reset';
+    setTimeout(() => { if (resetArmed) { resetArmed = false; btn.textContent = 'Reset progress'; } }, 3000);
+    return;
+  }
+  resetArmed = false;
+  state = { completed: [], unlocked: false, current: 1, drafts: {} };
+  chatHistory = {};
+  saveState();
+  const unlockInputEl = document.getElementById('unlockInput');
+  if (unlockInputEl) unlockInputEl.value = '';
+  const unlockMsgEl = document.getElementById('unlockMsg');
+  if (unlockMsgEl) unlockMsgEl.textContent = '';
+  btn.textContent = 'Reset progress';
+  render();
+}
+
+function selectDay(day) {
+  if (isLocked(day)) return;
+  state.current = day;
+  saveState();
+  render();
+}
+
+function markComplete(day) {
+  if (!state.completed.includes(day)) {
+    state.completed.push(day);
+    saveState();
+    render();
+  }
+}
+
+function computeStreak() {
+  let streak = 0;
+  for (let d = 1; d <= LESSONS.length; d++) {
+    if (state.completed.includes(d)) streak++;
+    else break;
+  }
+  return streak;
+}
+
+/* ---------- Voice (text-to-speech) ----------
+   IMPORTANT: text is never embedded directly inside inline onclick="" attributes
+   (that was the earlier bug — quotes inside the paragraph broke the HTML attribute).
+   Instead every speakable element carries the text in a data-speak attribute,
+   HTML-escaped, and a single delegated listener reads it back out safely. */
+function escAttr(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+let voicesReady = false;
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = () => { voicesReady = true; };
+}
+
+function speakText(text, btnEl) {
+  if (!text || !text.trim()) return;
+  if (!('speechSynthesis' in window)) {
+    if (btnEl) {
+      const orig = btnEl.textContent;
+      btnEl.textContent = '🔇 Voice not supported here';
+      setTimeout(() => { btnEl.textContent = orig; }, 2000);
+    }
+    return;
+  }
+  try {
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 0.92;
+    utter.pitch = 1;
+    utter.lang = 'en-US';
+    window.speechSynthesis.speak(utter);
+  } catch (e) { /* ignore */ }
+}
+
+// Delegated click handler for every [data-speak] element (paragraphs, vocab chips)
+document.addEventListener('click', function (e) {
+  const el = e.target.closest('[data-speak]');
+  if (!el) return;
+  speakText(el.getAttribute('data-speak'), el);
+});
+
+/* ---------- Draft (own text) handling ---------- */
+function getDraft(day, field) { return (state.drafts[day] && state.drafts[day][field]) || ''; }
+function saveDraft(day, field, value) {
+  if (!state.drafts[day]) state.drafts[day] = {};
+  state.drafts[day][field] = value;
+  saveState();
+}
+function speakDraft(day, field, btnEl) {
+  const text = getDraft(day, field);
+  if (!text.trim()) {
+    if (btnEl) {
+      const original = btnEl.textContent;
+      btnEl.textContent = 'Write something first';
+      setTimeout(() => { btnEl.textContent = original; }, 1800);
+    }
+    return;
+  }
+  speakText(text, btnEl);
+}
+
+/* ---------- AI Conversation Partner ---------- */
+function appendChatMsg(day, role, content) {
+  if (!chatHistory[day]) chatHistory[day] = [];
+  chatHistory[day].push({ role, content });
+}
+
+async function sendChat(day) {
+  const input = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('chatSendBtn');
+  const text = input.value.trim();
+  if (!text) return;
+
+  if (!sampleFn) {
+    appendChatMsg(day, 'system', "AI conversation partner isn't available in this view right now. You can still paste the prompt into ChatGPT or Claude directly.");
+    input.value = '';
+    renderChatWindow(day);
+    return;
+  }
+
+  appendChatMsg(day, 'user', text);
+  input.value = '';
+  input.disabled = true;
+  sendBtn.disabled = true;
+  renderChatWindow(day);
+
+  const lesson = LESSONS.find(l => l.day === day);
+  const history = (chatHistory[day] || [])
+    .filter(m => m.role === 'user' || m.role === 'ai')
+    .map(m => ({ role: m.role === 'ai' ? 'assistant' : 'user', content: m.content }));
+
+  const systemContext = "You are a friendly, encouraging English conversation partner helping a student practice speaking and writing. Today's lesson focuses on: " + lesson.tenseTitle + ". Keep replies short (2-4 sentences), natural, and conversational. Gently point out grammar mistakes when they happen, but stay warm and encouraging, not like a strict teacher.";
+
+  try {
+    const result = await sampleFn([{ role: 'user', content: systemContext + '\n\nConversation so far, respond to the latest message:' }, ...history]);
+    appendChatMsg(day, 'ai', result.text || "Sorry, I couldn't generate a reply just now.");
+  } catch (e) {
+    appendChatMsg(day, 'system', 'Something went wrong reaching the AI. Try again in a moment.');
+  }
+
+  input.disabled = false;
+  sendBtn.disabled = false;
+  renderChatWindow(day);
+  input.focus();
+}
+
+function renderChatWindow(day) {
+  const win = document.getElementById('chatWindow');
+  if (!win) return;
+  const msgs = chatHistory[day] || [];
+  win.innerHTML = msgs.map(m => {
+    const cls = m.role === 'user' ? 'user' : (m.role === 'ai' ? 'ai' : 'system');
+    if (cls === 'ai') {
+      return '<div class="chat-msg ai chat-msg-ai-row">' +
+        '<span>' + escapeHtml(m.content) + '</span>' +
+        '<button class="chat-speak-btn" data-speak="' + escAttr(m.content) + '" title="Listen">🔊</button>' +
+        '</div>';
+    }
+    return '<div class="chat-msg ' + cls + '">' + escapeHtml(m.content) + '</div>';
+  }).join('');
+  win.scrollTop = win.scrollHeight;
+}
+
+function startConversation(day) {
+  if (!chatHistory[day]) chatHistory[day] = [];
+  if (chatHistory[day].length === 0) {
+    appendChatMsg(day, 'system', 'Conversation partner ready. Use the suggested prompt above, or type anything you like below.');
+  }
+  renderChatWindow(day);
+}
+
+function vocabChip(item) {
+  return '<div class="vocab-chip">' +
+    '<span class="vc-text"><span>' + escapeHtml(item.text) + '</span>' +
+    (item.pron ? '<span class="vc-pron">' + escapeHtml(item.pron) + '</span>' : '') +
+    '</span>' +
+    '<button data-speak="' + escAttr(item.text) + '" title="Listen">🔊</button>' +
+    '</div>';
+}
+
+/* ---------- Render ---------- */
+function render() {
+  document.getElementById('streakNum').textContent = computeStreak();
+  document.getElementById('freeLimitLabel').textContent = FREE_LIMIT;
+  document.getElementById('unlockBox').style.display = state.unlocked ? 'none' : 'block';
+
+  const list = document.getElementById('dayList');
+  list.innerHTML = '';
+  LESSONS.forEach(lesson => {
+    const li = document.createElement('li');
+    const locked = isLocked(lesson.day);
+    li.className = 'day-item' + (lesson.day === state.current ? ' active' : '') + (locked ? ' locked' : '');
+    li.onclick = () => selectDay(lesson.day);
+    const dot = document.createElement('span');
+    dot.className = 'day-dot' + (state.completed.includes(lesson.day) ? ' done' : '');
+    li.appendChild(dot);
+    const label = document.createElement('span');
+    label.textContent = 'Day ' + lesson.day;
+    li.appendChild(label);
+    if (locked) {
+      const lock = document.createElement('span');
+      lock.className = 'lock-icon';
+      lock.textContent = '🔒';
+      li.appendChild(lock);
+    }
+    list.appendChild(li);
+  });
+
+  const main = document.getElementById('main');
+  const lesson = LESSONS.find(l => l.day === state.current);
+
+  if (!lesson || isLocked(lesson.day)) {
+    main.innerHTML = '<div class="locked-view"><div class="icon">🔒</div><h2>This lesson is locked</h2>' +
+      '<p>You\'ve completed the free preview. Get your unlock code on Ko-fi to access every lesson — including new ones as they\'re added.</p></div>';
+    return;
+  }
+
+  const done = state.completed.includes(lesson.day);
+  const idx = LESSONS.findIndex(l => l.day === lesson.day);
+  const prevDay = idx > 0 ? LESSONS[idx - 1].day : null;
+  const nextLesson = LESSONS[idx + 1];
+  const nextDay = nextLesson && !isLocked(nextLesson.day) ? nextLesson.day : null;
+
+  const speakingDraft = getDraft(lesson.day, 'speaking');
+  const writingDraft = getDraft(lesson.day, 'writing');
+
+  main.innerHTML =
+    '<p class="eyebrow">Day ' + lesson.day + ' of your daily practice</p>' +
+    '<h1>' + escapeHtml(lesson.title) + '</h1>' +
+    '<p class="subtitle">30 minutes · warm-up, grammar, speaking, writing, and a conversation partner</p>' +
+
+    '<div class="section"><p class="section-title">🗣️ Warm-up</p>' +
+      '<div class="given-box"><p>' + escapeHtml(lesson.warmupIntro) + '</p></div>' +
+      '<div style="margin-top:16px;">' +
+      lesson.warmupQuestions.map((q, i) => {
+        const draftKey = 'warmup_' + i;
+        const draftVal = getDraft(lesson.day, draftKey);
+        return '<div class="wu-question">' +
+          '<div class="wu-q-row">' +
+            '<span class="wu-q-text">' + (i + 1) + '. ' + escapeHtml(q) + '</span>' +
+            '<button class="wu-speak-btn" data-speak="' + escAttr(q) + '" title="Listen">🔊</button>' +
+          '</div>' +
+          '<textarea class="wu-answer" placeholder="Write your answer here..." oninput="saveDraft(' + lesson.day + ", '" + draftKey + "', this.value)\">" + escapeHtml(draftVal) + '</textarea>' +
+        '</div>';
+      }).join('') +
+      '</div>' +
+    '</div>' +
+
+    '<div class="section"><p class="section-title">📘 ' + escapeHtml(lesson.tenseTitle) + '</p>' +
+      '<ul class="points">' + lesson.tensePoints.map(pt => '<li>' + pt + '</li>').join('') + '</ul>' +
+    '</div>' +
+
+    '<div class="section"><p class="section-title">🎧 Speaking practice</p>' +
+      '<div class="given-box"><p>' + escapeHtml(lesson.speaking) + '</p></div>' +
+      '<button class="voice-btn" data-speak="' + escAttr(lesson.speaking) + '">🔊 Listen to the paragraph</button>' +
+      '<textarea class="own-input" id="speakingDraft" placeholder="Now try writing your own short introduction or answer, using today\'s grammar..." oninput="saveDraft(' + lesson.day + ", 'speaking', this.value)\">" + escapeHtml(speakingDraft) + '</textarea>' +
+      '<button class="voice-btn alt" onclick="speakDraft(' + lesson.day + ", 'speaking', this)\">🔊 Listen to what I wrote</button>" +
+    '</div>' +
+
+    '<div class="section"><p class="section-title">💬 Conversation partner</p>' +
+      '<p>Use today\'s starter prompt below, or just type anything you\'d like to talk about — the AI will reply and gently correct your grammar as you go.</p>' +
+      '<div class="prompt-box">' + escapeHtml(lesson.starterPrompt) + '</div>' +
+      '<div id="chatWindow" class="chat-window" style="margin-top:14px;"></div>' +
+      '<div class="chat-input-row">' +
+        '<input type="text" id="chatInput" placeholder="Type your message..." onkeydown="if(event.key===\'Enter\'){sendChat(' + lesson.day + ');}">' +
+        '<button id="chatSendBtn" onclick="sendChat(' + lesson.day + ')">Send</button>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="section"><p class="section-title">✍️ Writing practice</p>' +
+      '<span class="given-label">Topic</span>' +
+      '<div class="given-box"><p>' + escapeHtml(lesson.writingTopic) + '</p></div>' +
+      '<p style="margin-top:12px; font-weight:600; color:var(--navy); font-size:13.5px;">Words & phrases to use in your writing:</p>' +
+      '<div class="vocab-grid">' + lesson.writingVocab.map(vocabChip).join('') + '</div>' +
+      '<textarea class="own-input" id="writingDraft" placeholder="Write your 4-6 sentences here..." oninput="saveDraft(' + lesson.day + ", 'writing', this.value)\">" + escapeHtml(writingDraft) + '</textarea>' +
+      '<button class="voice-btn" onclick="speakDraft(' + lesson.day + ", 'writing', this)\">🔊 Listen to what I wrote</button>" +
+    '</div>' +
+
+    '<div class="section"><p class="section-title">📚 Extra vocabulary & phrases for today</p>' +
+      '<div class="vocab-grid">' + lesson.endVocab.map(vocabChip).join('') + '</div>' +
+    '</div>' +
+
+    '<div class="complete-bar">' +
+      '<div class="nav-links">' +
+        '<button ' + (prevDay ? '' : 'disabled') + ' onclick="selectDay(' + prevDay + ')">← Previous</button>' +
+        '<button ' + (nextDay ? '' : 'disabled') + ' onclick="selectDay(' + nextDay + ')">Next →</button>' +
+      '</div>' +
+      '<button class="complete-btn ' + (done ? 'done' : '') + '" onclick="markComplete(' + lesson.day + ')" ' + (done ? 'disabled' : '') + '>' +
+        (done ? '✓ Completed' : 'Mark Day Complete') +
+      '</button>' +
+    '</div>';
+
+  startConversation(lesson.day);
+}
+
+loadState();
+initSample().then(render);
+render();
+</script>
+</body>
+</html>
